@@ -5,6 +5,7 @@ from datetime import date
 
 # ----------- Enum -----------
 class TipoUsuario(str, Enum):
+    MASTER = "MASTER"
     ADMIN = "ADMIN"
     FUNC = "FUNC"
 
@@ -14,6 +15,7 @@ class ClienteBase(BaseModel):
     cnpj: str
     ativo: Optional[bool] = True
     max_cadastros: int
+    emailrh: Optional[str] = None
 
 class ClienteCreate(ClienteBase):
     pass
@@ -22,7 +24,7 @@ class ClienteResponse(ClienteBase):
     id: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # ----------- Usuário -----------
 class UsuarioBase(BaseModel):
@@ -34,7 +36,7 @@ class UsuarioBase(BaseModel):
 
 class UsuarioCreate(UsuarioBase):
     senha: str
-    cliente_id: str
+    cliente_id: Optional[str] = None
 
 class UsuarioLogin(BaseModel):
     email: EmailStr
@@ -43,21 +45,29 @@ class UsuarioLogin(BaseModel):
 class UsuarioResponse(UsuarioBase):
     id: str
     concluido: bool
-    cliente_id: str
+    cliente_id: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
 
 # ----------- Aula -----------
 class AulaBase(BaseModel):
     nome: str
     link: str
+    sequencia: int
 
-class AulaCreate(AulaBase):
-    pass
+class AulaCreate(BaseModel):
+    nome: str
+    link: str
+    sequencia: int
 
-class AulaResponse(AulaBase):
+class AulaResponse(BaseModel):
     id: str
+    nome: str
+    link: str
+    sequencia: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+

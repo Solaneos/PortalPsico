@@ -3,16 +3,30 @@ import { useState } from 'react';
 import { TextField, Button, Typography, IconButton } from '@mui/material';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import api from '@/api/api';
 import './Login.scss';
 
 function Login({ darkMode, toggleTheme }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
+  try {
+    const formData = new URLSearchParams();
+    formData.append('username', email);
+    formData.append('password', senha);
+
+    const response = await api.post('/usuarios/login', formData);
+    const { access_token } = response.data;
+    localStorage.setItem('token', access_token);
     navigate('/home');
-  };
+  } catch (error) {
+    console.error('Erro no login', error);
+    alert('Email ou senha inválidos');
+  }
+};
 
   return (
     <div className="login-container">
@@ -26,6 +40,7 @@ function Login({ darkMode, toggleTheme }) {
           <Typography component="h1" variant="h5" className="titulo">
             Login
           </Typography>
+
           <TextField
             variant="outlined"
             margin="normal"
@@ -45,6 +60,13 @@ function Login({ darkMode, toggleTheme }) {
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
           />
+
+          {error && (
+            <Typography color="error" variant="body2">
+              {error}
+            </Typography>
+          )}
+
           <Button
             fullWidth
             variant="contained"

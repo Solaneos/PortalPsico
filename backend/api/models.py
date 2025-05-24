@@ -1,5 +1,5 @@
-from sqlalchemy import Column, String, Boolean, Date, Enum, ForeignKey
-from sqlalchemy.dialects.sqlite import INTEGER
+from sqlalchemy import Column, String, Boolean, Date, Enum, ForeignKey, Numeric
+from sqlalchemy import Integer
 from sqlalchemy.orm import relationship
 from uuid import uuid4
 from enum import Enum as PyEnum
@@ -9,6 +9,7 @@ def generate_uuid():
     return str(uuid4())
 
 class TipoUsuario(PyEnum):
+    MASTER = "MASTER"
     ADMIN = "ADMIN"
     FUNC = "FUNC"
 
@@ -19,7 +20,8 @@ class Cliente(Base):
     nome = Column(String, nullable=False)
     cnpj = Column(String, unique=True, nullable=False)
     ativo = Column(Boolean, default=True)
-    max_cadastros = Column(INTEGER)
+    max_cadastros = Column(Integer)
+    emailrh = Column(String)
 
     usuarios = relationship("Usuario", back_populates="cliente")
 
@@ -44,3 +46,4 @@ class Aula(Base):
     id = Column(String, primary_key=True, index=True, default=generate_uuid)
     nome = Column(String, nullable=False)
     link = Column(String, nullable=False)
+    sequencia = Column(Numeric, nullable=False)
